@@ -1,3 +1,4 @@
+from urllib import response
 import pydicom
 from PIL import Image
 import matplotlib.pyplot as plt
@@ -9,7 +10,8 @@ from encryption import encrypt_dicom
 from send_to_server import send_dicom_to_server
 
 if __name__ == "__main__":
-    ds = pydicom.dcmread("sample.dcm")
+    filename = "sample.dcm"
+    ds = pydicom.dcmread(filename)
     ds = anonymise(ds)
     hash = hash_dicom(ds)
     image_array = ds.pixel_array
@@ -17,9 +19,9 @@ if __name__ == "__main__":
     #ds.pixel_array = watermarked_image_array
     peer_public_key, ciphertext, tag = encrypt_dicom(ds)
     #send this ciphertext and tag to server
-    response_code = send_dicom_to_server(ciphertext, tag, peer_public_key)
+    response = send_dicom_to_server(ciphertext, tag, peer_public_key, filename)
     #print(ds)
-    if(response_code == 200):
+    if(response.status_code == 200):
         print("Done!")
     else:
-        print('Failed! HTTP Response Code ', response_code)
+        print('Failed! HTTP', response.status_code)

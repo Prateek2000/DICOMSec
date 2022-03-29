@@ -1,4 +1,5 @@
 import pickle
+import pydicom
 from pathlib import Path
 from flask import Flask, request, Response
 from cryptography.hazmat.primitives.asymmetric import ec
@@ -6,6 +7,7 @@ from cryptography.hazmat.primitives.ciphers.aead import AESGCM
 from cryptography.hazmat.primitives.kdf.hkdf import HKDF #hmac based key derivation fn
 from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.primitives import hashes
+from base64 import b64decode
 
 
 app = Flask(__name__)
@@ -62,24 +64,18 @@ def generate_or_load_key():
         }
 
 
-@app.route('/transfer_dicom')
+@app.route('/transfer_dicom',  methods=['GET'])
 def receive_dicom_image():
     print("=======Received payload=========")
-    data = request.args
-    print("type of data=", type(data))
-    print("headers=", request.headers)
-    print("data=", data)
-    rameshbytes = request.args.get('ramesh', type=bytes)
-    print("Type of value=", type(data['ramesh']))
-    """
-    ciphertext = bytes(request.args.get('ciphertext', type=str), encoding='utf-8')
-    tag = bytes(request.args.get('tag', type=str), encoding='utf-8')
-    peer_public_key_bytes = bytes(request.args.get('peer_public_key', type=str), encoding='utf-8')
+    ciphertext = b64decode(bytes(request.args.get('ciphertext'), encoding='utf-8'))
+    tag = b64decode(bytes(request.args.get('tag'), encoding='utf-8'))
+    peer_public_key_bytes = b64decode(bytes(request.args.get('peer_public_key_bytes'), encoding='utf-8'))
+    filename = request.args.get('filename')
     peer_public_key = serialization.load_pem_public_key(peer_public_key_bytes)
-    print('peer public key bytes type=',type(peer_public_key_bytes))
+    print('peer public key type=',type(peer_public_key))
     print('ct type=',type(ciphertext))
     print('tag type=',type(tag))
-    shared_key = server_private_key.exchange(ec.ECDH(), peer_public_key_bytes)
+    shared_key = server_private_key.exchange(ec.ECDH(), peer_public_key)
     derived_key = HKDF(
         algorithm=hashes.SHA256(),
         length = 16,
@@ -90,14 +86,14 @@ def receive_dicom_image():
     key = derived_key
     cipher = AESGCM(key)
     data = cipher.decrypt(tag, ciphertext, None) #add header param if used in encryption
-    dataset = pickle.loads(data)
-    print("Data type = ", type(dataset))
-    """
-    return Response('Server received file')
-
+    dataset: pydicom.FileDataset = pickle.loads(data)
+    print(dataset)
+    dataset.save_as('received_files/'+filename, write_like_original=False)
+    #maybe add feature to save multiple files with new numbers for each, or get filename from client
+    return(Response('OK'))
 
 
 if __name__=='__main__':
     import logging
     logging.basicConfig(filename='error.log', level=logging.DEBUG)
-    app.run(host='0.0.0.0', port=5000)
+    app.run(debug=True, host='0.0.0.0', port=5000)

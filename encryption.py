@@ -2,7 +2,6 @@ import pydicom
 import pickle
 import os
 import requests
-from base64 import b64encode
 from cryptography.hazmat.primitives.ciphers.aead import AESGCM
 from cryptography.hazmat.primitives.asymmetric import ec
 from cryptography.hazmat.primitives.kdf.hkdf import HKDF #hmac based key derivation fn
