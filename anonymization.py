@@ -3,7 +3,7 @@ from helper import anonymization_dict, generate_random
 import re
 
 
-def anonymise(dataset: pydicom.FileDataset):
+def anonymise(dataset: pydicom.FileDataset) -> pydicom.FileDataset:
     # Anonymization code
     # ref https://pydicom.github.io/pydicom/1.0/auto_examples/metadata_processing/plot_anonymize.html#sphx-glr-auto-examples-metadata-processing-plot-anonymize-py
     # it describes how to modify and anonymize tag values
