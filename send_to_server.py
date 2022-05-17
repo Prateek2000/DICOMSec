@@ -8,9 +8,6 @@ def send_dicom_to_server(ciphertext:bytes, tag:bytes, peer_public_key: _Elliptic
         encoding = serialization.Encoding.PEM,
         format = serialization.PublicFormat.SubjectPublicKeyInfo
     )
-    print("Public key bytes format  = ", type(public_key_bytes))
-    print("CT format  = ", type(ciphertext))
-    print("tag   = ", tag)
     data = {'ciphertext': b64encode(ciphertext).decode('utf-8'),
             'tag': b64encode(tag).decode('utf-8'),
             'peer_public_key_bytes': b64encode(public_key_bytes).decode('utf-8'),

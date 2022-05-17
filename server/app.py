@@ -7,6 +7,7 @@ from cryptography.hazmat.primitives.ciphers.aead import AESGCM
 from cryptography.hazmat.primitives.kdf.hkdf import HKDF #hmac based key derivation fn
 from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.primitives import hashes
+import matplotlib.pyplot as plt
 from base64 import b64decode
 
 
@@ -24,7 +25,9 @@ def generate_or_load_key():
             )
             server_public_key = server_private_key.public_key()
             """
-            DO NOT UNCOMMENT THIS IT IS STUPID TO SHOW PRIVATE KEYS DON'T DO IT
+            DO NOT UNCOMMENT THIS 
+            IT IS STUPID TO SHOW PRIVATE KEYS 
+            DON'T DO IT
             IT IS ONLY FOR DEBUGGING
             print("private key = ", server_private_key.private_bytes(
                 encoding = serialization.Encoding.PEM,
@@ -66,15 +69,12 @@ def generate_or_load_key():
 
 @app.route('/transfer_dicom',  methods=['GET'])
 def receive_dicom_image():
-    print("=======Received payload=========")
+    print("=======Received dataset=========")
     ciphertext = b64decode(bytes(request.args.get('ciphertext'), encoding='utf-8'))
     tag = b64decode(bytes(request.args.get('tag'), encoding='utf-8'))
     peer_public_key_bytes = b64decode(bytes(request.args.get('peer_public_key_bytes'), encoding='utf-8'))
     filename = request.args.get('filename')
     peer_public_key = serialization.load_pem_public_key(peer_public_key_bytes)
-    print('peer public key type=',type(peer_public_key))
-    print('ct type=',type(ciphertext))
-    print('tag type=',type(tag))
     shared_key = server_private_key.exchange(ec.ECDH(), peer_public_key)
     derived_key = HKDF(
         algorithm=hashes.SHA256(),
@@ -88,6 +88,11 @@ def receive_dicom_image():
     data = cipher.decrypt(tag, ciphertext, None) #add header param if used in encryption
     dataset: pydicom.FileDataset = pickle.loads(data)
     print(dataset)
+    """
+    image_array = dataset.pixel_array
+    plt.imshow(image_array, cmap=plt.cm.bone)
+    plt.show()
+    """
     dataset.save_as('received_files/'+filename, write_like_original=False)
     #maybe add feature to save multiple files with new numbers for each, or get filename from client
     return(Response('OK'))
