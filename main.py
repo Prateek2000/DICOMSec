@@ -4,10 +4,12 @@ from PIL import Image
 import matplotlib.pyplot as plt
 from matplotlib import cm
 import numpy as np
+
 from anonymization import anonymise
 from hashing import hash_dicom
 from encryption import encrypt_dicom
 from send_to_server import send_dicom_to_server
+from watermark import watermark_image
 
 if __name__ == "__main__":
     filename = "sample.dcm"
@@ -23,13 +25,13 @@ if __name__ == "__main__":
     print("Hash generated= ", hash)
 
     image_array = ds.pixel_array
-    plt.imshow(image_array, cmap=plt.cm.bone)
-    plt.show()
-    #function that takes pixel array, and hash as arg and returns watermarked pixel array
-    #ds.pixel_array = watermarked_image_array
+    
+    
+    #function that takes pixel array, and hash as arg and returns watermarked pixel array, and dict containing old values
+    ds.PixelData, old_values = watermark_image(image_array, hash)
     #Watermarking complete
 
-    peer_public_key, ciphertext, tag = encrypt_dicom(ds)
+    peer_public_key, ciphertext, tag = encrypt_dicom(ds, old_values)
     print("Encryption complete! Sending to server...")
 
     #send this ciphertext and tag to server
