@@ -1,4 +1,3 @@
-from copyreg import pickle
 import pydicom
 from hashlib import sha256
 import pickle

@@ -11,7 +11,7 @@ from cryptography.hazmat.backends.openssl.ec import _EllipticCurvePublicKey
 
 Encrypted_Dicom_Return = tuple[_EllipticCurvePublicKey, bytes, bytes]
 
-def encrypt_dicom(dataset: pydicom.FileDataset) -> Encrypted_Dicom_Return:
+def encrypt_dicom(dataset: pydicom.FileDataset, old_values: dict) -> Encrypted_Dicom_Return:
     #EC DH to generate shared key over insecure medium
     # we are peer, server is server (rpi).
     server_public_key = get_server_public_key()
@@ -33,7 +33,7 @@ def encrypt_dicom(dataset: pydicom.FileDataset) -> Encrypted_Dicom_Return:
     #not using anything as header for now but possibly metadata of DICOM? 
     need to think if sending it as plaintext is okay
     """
-    data = pickle.dumps(dataset)
+    data = pickle.dumps([dataset,old_values])
     key = derived_key 
     # print("length of derived key =", len(derived_key))
     tag = os.urandom(12)
@@ -44,6 +44,7 @@ def encrypt_dicom(dataset: pydicom.FileDataset) -> Encrypted_Dicom_Return:
     data is plaintext
     header is unencrypted but authenticated during decryption
     """
+
     return peer_public_key, ciphertext, tag
 
 
