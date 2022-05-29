@@ -2,6 +2,7 @@ extraInfo/
 .vscode/
 server/received_files
 server/keys
+ds_diffs/
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

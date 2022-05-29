@@ -9,14 +9,18 @@ from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.primitives import hashes
 import matplotlib.pyplot as plt
 from base64 import b64decode
+import os
+import time
 
 from verify_hash import verify_hash
+from write_np_to_file import write_nparr_to_file
 
 
 app = Flask(__name__)
 
 @app.route('/generate_keys')
 def generate_or_load_key():
+    st = time.time()
     global server_private_key 
     private_key_file = Path("keys/server_private_key.pem")
     if private_key_file.is_file():
@@ -36,6 +40,7 @@ def generate_or_load_key():
                 format= serialization.PrivateFormat.PKCS8,
                 encryption_algorithm= serialization.NoEncryption()))
             """
+            print("Time taken to load key: ", time.time()-st)
             return {
             'public_key': server_public_key.public_bytes(
                 encoding = serialization.Encoding.PEM, 
@@ -62,6 +67,7 @@ def generate_or_load_key():
                 format = serialization.PrivateFormat.PKCS8,
                 encryption_algorithm = serialization.NoEncryption()))
         """
+        print("Time taken to generate key: ", time.time()-st)
         return {
             'public_key': server_public_key.public_bytes(
                 encoding = serialization.Encoding.PEM, 
@@ -75,7 +81,6 @@ def receive_dicom_image():
     ciphertext = b64decode(bytes(request.args.get('ciphertext'), encoding='utf-8'))
     tag = b64decode(bytes(request.args.get('tag'), encoding='utf-8'))
     peer_public_key_bytes = b64decode(bytes(request.args.get('peer_public_key_bytes'), encoding='utf-8'))
-    filename = request.args.get('filename')
     
     peer_public_key = serialization.load_pem_public_key(peer_public_key_bytes)
     shared_key = server_private_key.exchange(ec.ECDH(), peer_public_key)
@@ -92,15 +97,27 @@ def receive_dicom_image():
     decoded_data = pickle.loads(data)
     dataset: pydicom.FileDataset = decoded_data[0]
     old_values = decoded_data[1]
-    print(dataset)
+
+
+    #####################################################################################
+    ds_diff_folder = os.path.join("D:\\","VIT","Sem8","Capstone","DICOMSec","ds_diffs") #
+    fp = open(os.path.join(ds_diff_folder,"received.txt"), mode="w")                    #
+    print(dataset, file=fp)
+    write_nparr_to_file(dataset.pixel_array, 'after_receiving.txt')                                                              #
+    fp.close()                                                                          #
+    #####################################################################################
+
     """
     image_array = dataset.pixel_array
     plt.imshow(image_array, cmap=plt.cm.bone)
     plt.show()
     """
-    if(verify_hash(dataset, old_values)):
-        dataset.save_as('received_files/'+filename, write_like_original=False)
+    hash_success = verify_hash(dataset, old_values)
+    if(hash_success != '0'):
+        # dataset.save_as('received_files/'+filename, write_like_original=False)
         #maybe add feature to save multiple files with new numbers for each, or get filename from client
+        dataset.save_as('received_files/'+hash_success, write_like_original=True) #should be in if statement  
+        print("File saved")  
         return(Response('OK'))
     else:
         return(Response('Hash did not match'))
