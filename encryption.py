@@ -2,6 +2,7 @@ import pydicom
 import pickle
 import os
 import requests
+import time
 from cryptography.hazmat.primitives.ciphers.aead import AESGCM
 from cryptography.hazmat.primitives.asymmetric import ec
 from cryptography.hazmat.primitives.kdf.hkdf import HKDF #hmac based key derivation fn
@@ -11,10 +12,11 @@ from cryptography.hazmat.backends.openssl.ec import _EllipticCurvePublicKey
 
 Encrypted_Dicom_Return = tuple[_EllipticCurvePublicKey, bytes, bytes]
 
-def encrypt_dicom(dataset: pydicom.FileDataset, old_values: dict) -> Encrypted_Dicom_Return:
+def encrypt_dicom(dataset: pydicom.FileDataset, old_values: dict, ip: str, port: str) -> Encrypted_Dicom_Return:
     #EC DH to generate shared key over insecure medium
     # we are peer, server is server (rpi).
-    server_public_key = get_server_public_key()
+    server_public_key = get_server_public_key(ip, port)
+    st = time.time()
     peer_private_key = ec.generate_private_key(
         ec.SECP256K1() # Also known as NIST P-256 elliptic curve
     )
@@ -45,11 +47,15 @@ def encrypt_dicom(dataset: pydicom.FileDataset, old_values: dict) -> Encrypted_D
     header is unencrypted but authenticated during decryption
     """
 
+    print("Encryption Time: ", time.time()-st)
+
     return peer_public_key, ciphertext, tag
 
 
-def get_server_public_key(): #for server, call this from main if no privatekey.pem exists
-    response = requests.get("http://localhost:5000/generate_keys")
+def get_server_public_key(ip: str, port: str):
+    endpoint = 'http://' + ip + ':' + port + '/generate_keys'
+    print("Sending get request to: ", endpoint)
+    response = requests.get(endpoint)
     server_public_key = serialization.load_pem_public_key(
         bytes(response.json()['public_key'], encoding='utf-8')
     )

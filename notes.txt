@@ -1,0 +1,35 @@
+#patient_tags = ds.dir("patient")
+    #for x in patient_tags:
+    #    print(ds.data_element(x))
+    #print(ds)
+
+    #image_data = ds.pixel_array
+    #print("Image length = ", len(image_data))
+    #print("Rows = ", ds.Rows)
+    #print("Rows = ", ds.Rows)
+    #print("Image length = ", len(image_data))
+    #image = Image.frombytes('RGBA', (256,256), image_data)
+    #image.show()
+
+    #image_arr = ds.pixel_array
+    #im = Image.fromarray(cm.gist_yarg(image_arr)).show() //bad
+    #plt.imshow(ds.pixel_array, cmap='gray')    /good
+    #plt.show()
+
+
+from msilib.schema import File
+
+from write_np_to_file import write_nparr_to_file
+
+
+we have ascertained that the pixel data remains consistent (changes after watermarking and is restored correctly)
+and so does the metadata (does not change). For this we printed the metadata to a file at various points and hashed the contents of the file
+using Get-FileHash in powershell. For the numpy array we used the function in write_nparr_to_file to dump the whole 
+array to a file and compared hashes again at various points. 
+Thus we found they were consistent. Proof is in this image
+
+to find time per module do
+import time
+st = time.time()
+
+and at the end time.time()-st

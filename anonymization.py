@@ -1,9 +1,12 @@
 import pydicom
-from helper import anonymization_dict, generate_random
 import re
+import time
+
+from helper import anonymization_dict, generate_random
 
 
 def anonymise(dataset: pydicom.FileDataset) -> pydicom.FileDataset:
+    st = time.time()
     # Anonymization code
     # ref https://pydicom.github.io/pydicom/1.0/auto_examples/metadata_processing/plot_anonymize.html#sphx-glr-auto-examples-metadata-processing-plot-anonymize-py
     # it describes how to modify and anonymize tag values
@@ -67,4 +70,5 @@ def anonymise(dataset: pydicom.FileDataset) -> pydicom.FileDataset:
 
     anonymized_dataset = remove_private_elements(dataset)
     anonymized_dataset.walk(remove_patient_details_callback)
+    print("Anonymization Time: ", time.time()-st)
     return anonymized_dataset
