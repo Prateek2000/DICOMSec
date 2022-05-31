@@ -11,7 +11,7 @@ from server_address import SERVER_IP, SERVER_PORT
 
 from write_np_to_file import write_nparr_to_file
 
-def driver(filename, anonymization, server, port):
+def driver(filename, anonymization, server, port, sha2, timing):
     print(f'server={server}, port={port}')
     # st = time.time()
     ds_diff_folder = os.path.join("D:\\","VIT","Sem8","Capstone","DICOMSec","ds_diffs")
@@ -37,7 +37,7 @@ def driver(filename, anonymization, server, port):
     fp1.close()                                                         #
     #####################################################################
 
-    hash = hash_dicom(ds)
+    hash = hash_dicom(ds, sha2)
     print("Hash in bytes: ", hash)
     
     #####################################################################
@@ -51,7 +51,7 @@ def driver(filename, anonymization, server, port):
     image_array = ds.pixel_array
     
     #function that takes pixel array, and hash as arg and returns watermarked pixel array, and dict containing old values
-    ds.PixelData, old_values = watermark_image(image_array, hash)
+    ds.PixelData, old_values = watermark_image(image_array, hash, timing)
     #Watermarking complete
 
     #####################################################################
@@ -90,10 +90,19 @@ if __name__ == "__main__":
 
     parser.add_argument('--port', '-p', type=str,
     help='Server Port, default=5000')
+
+    parser.add_argument('--sha2', '-s', 
+    action='store_true',
+    help="Force use of SHA2_256 as hashing algorithm")
+
+    parser.add_argument('--timing', 
+    action='store_true',
+    help="Disable display of plots for timing the modules")
     
     parser.add_argument('filename',
      nargs='+',
      help='Enter the name of file/files separated by space')
+
 
     args = parser.parse_args()
 
@@ -113,6 +122,9 @@ if __name__ == "__main__":
     else:
         print('Port: 5000')
         server_port = SERVER_PORT
+
+    if args.sha2:
+        print("Please make sure to change server config to use SHA2 instead")
     
     for x in filenames:
-        driver(filename = x, anonymization = args.anonymize, server = server_ip, port = server_port)
+        driver(filename = x, anonymization = args.anonymize, server = server_ip, port = server_port, sha2 = args.sha2, timing = args.timing)

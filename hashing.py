@@ -1,12 +1,12 @@
 import pydicom
-from hashlib import sha256
+from hashlib import sha3_256, sha256
 import pickle
 import io
 import sys
 import time
 
 
-def hash_dicom(dataset: pydicom.FileDataset) -> bytes:
+def hash_dicom(dataset: pydicom.FileDataset, sha2: bool) -> bytes:
     st = time.time()
     old_stdout = sys.stdout
     new_stdout_metadata = io.StringIO()
@@ -26,9 +26,11 @@ def hash_dicom(dataset: pydicom.FileDataset) -> bytes:
     #print(f'type = {type(ds_metadata)} , metadata = \n{ds_metadata}')
     #print(f'type = {type(ds_image_array)} , metadata = \n{ds_image_array}')
 
-
     dataset_bytes = pickle.dumps(ds_metadata+ds_image_array)
-    hash = sha256()
+    if(sha2 == True):
+        hash = sha256()
+    else:
+        hash = sha3_256()
     hash.update(dataset_bytes)
     print(f'Hash generated: {hash.hexdigest()}')
 

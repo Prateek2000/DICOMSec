@@ -1,5 +1,5 @@
 import pydicom
-from hashlib import sha256
+from hashlib import sha256, sha3_256
 import pickle
 import sys
 import io
@@ -7,6 +7,7 @@ import os
 import time
 
 from write_np_to_file import write_nparr_to_file
+from config import hash_family
 
 def verify_hash(dataset: pydicom.FileDataset, old_values: dict) -> str:
     st = time.time()
@@ -69,7 +70,12 @@ def verify_hash(dataset: pydicom.FileDataset, old_values: dict) -> str:
 
     
     restored_dataset_bytes = pickle.dumps(ds_metadata+ds_image_array)
-    hash = sha256()
+    if hash_family == 'sha3':
+        hash = sha3_256()
+    elif hash_family == 'sha2':
+        hash = sha256()
+    else:
+        print('This hash type is currently unsupported.')
     hash.update(restored_dataset_bytes)
     print("New hash calculated: ", hash.hexdigest())
     new_hash = hash.digest()

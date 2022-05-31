@@ -40,7 +40,7 @@ def generate_random_2tuples(dimension: int, count: int) -> tuple:
   return tuple(decoded_sample)
 
 
-def watermark_image(image_array: numpy.ndarray , hash: bytes) -> tuple[bytes, dict]:
+def watermark_image(image_array: numpy.ndarray , hash: bytes, timing: bool) -> tuple[bytes, dict]:
     st = time.time()
 
     substituted_image_array = image_array
@@ -80,22 +80,23 @@ def watermark_image(image_array: numpy.ndarray , hash: bytes) -> tuple[bytes, di
     fp = open("client_timelogs.txt", mode='a')
     print("Watermark Time: ", watermark_time, file=fp)
     
-    fig = plt.figure()
-    #old
-    fig.add_subplot(1,2,1)
-    plt.imshow(image_array, cmap = plt.cm.bone)
-    plt.axis('off')
-    plt.title('Old')
-    #new
+    if (timing == False):
+        fig = plt.figure()
+        #old
+        fig.add_subplot(1,2,1)
+        plt.imshow(image_array, cmap = plt.cm.bone)
+        plt.axis('off')
+        plt.title('Old')
+        #new
 
-    fig.add_subplot(1, 2, 2)
-    plt.imshow(substituted_image_array, cmap = plt.cm.bone)
-    plt.axis('off')
-    plt.title('Watermarked')
-    plt.show()
-    
-    #print("Dict containing old values")
-    #print(f'{old_values} of length {len(old_values)}')
+        fig.add_subplot(1, 2, 2)
+        plt.imshow(substituted_image_array, cmap = plt.cm.bone)
+        plt.axis('off')
+        plt.title('Watermarked')
+        plt.show()
+        
+        #print("Dict containing old values")
+        #print(f'{old_values} of length {len(old_values)}')
 
     
 

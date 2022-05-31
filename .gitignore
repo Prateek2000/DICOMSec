@@ -2,6 +2,8 @@ extraInfo/
 .vscode/
 server/received_files
 server/keys
+server/server_timelogs.txt
+client_timelogs.txt
 ds_diffs/
 # Byte-compiled / optimized / DLL files
 __pycache__/
