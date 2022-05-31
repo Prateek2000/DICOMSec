@@ -47,7 +47,10 @@ def encrypt_dicom(dataset: pydicom.FileDataset, old_values: dict, ip: str, port:
     header is unencrypted but authenticated during decryption
     """
 
-    print("Encryption Time: ", time.time()-st)
+    encryption_time = time.time()-st
+    print("Encryption Time: ", encryption_time)
+    fp = open("client_timelogs.txt", mode='a')
+    print("Encryption Time: ", encryption_time, file=fp)
 
     return peer_public_key, ciphertext, tag
 

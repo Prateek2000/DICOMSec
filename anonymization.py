@@ -70,5 +70,10 @@ def anonymise(dataset: pydicom.FileDataset) -> pydicom.FileDataset:
 
     anonymized_dataset = remove_private_elements(dataset)
     anonymized_dataset.walk(remove_patient_details_callback)
-    print("Anonymization Time: ", time.time()-st)
+
+    anonymization_time = time.time()-st
+    print("Anonymization Time: ", anonymization_time)
+    fp = open("client_timelogs.txt", mode='a')
+    print("Anonymization Time: ", anonymization_time, file=fp)
+
     return anonymized_dataset

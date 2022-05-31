@@ -40,7 +40,10 @@ def generate_or_load_key():
                 format= serialization.PrivateFormat.PKCS8,
                 encryption_algorithm= serialization.NoEncryption()))
             """
-            print("Time taken to load key: ", time.time()-st)
+            key_load_time = time.time()-st
+            print("Key load time: ", key_load_time)
+            fp = open("server_timelogs.txt", mode='a')
+            print("Key load time: ", key_load_time, file=fp)
             return {
             'public_key': server_public_key.public_bytes(
                 encoding = serialization.Encoding.PEM, 
@@ -67,7 +70,10 @@ def generate_or_load_key():
                 format = serialization.PrivateFormat.PKCS8,
                 encryption_algorithm = serialization.NoEncryption()))
         """
-        print("Time taken to generate key: ", time.time()-st)
+        key_generate_time = time.time()-st
+        print("Key generate time: ", key_generate_time)
+        fp = open("server_timelogs.txt", mode='a')
+        print("Key generate time: ", key_generate_time, file=fp)
         return {
             'public_key': server_public_key.public_bytes(
                 encoding = serialization.Encoding.PEM, 

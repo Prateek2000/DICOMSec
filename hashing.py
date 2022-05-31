@@ -31,7 +31,12 @@ def hash_dicom(dataset: pydicom.FileDataset) -> bytes:
     hash = sha256()
     hash.update(dataset_bytes)
     print(f'Hash generated: {hash.hexdigest()}')
-    print("Hashing Time: ", time.time()-st)
+
+    hashing_time = time.time()-st
+    print("Hashing Time: ", hashing_time)
+    fp = open("client_timelogs.txt", mode='a')
+    print("Hashing Time: ", hashing_time, file=fp)
+
     return hash.digest()
 
 if __name__ == '__main__':

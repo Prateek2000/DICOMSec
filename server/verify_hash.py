@@ -76,13 +76,19 @@ def verify_hash(dataset: pydicom.FileDataset, old_values: dict) -> str:
 
     if (new_hash == old_hash):
         print(f'Hash match')
-        print("Time taken to verify hash: ", time.time()-st)
+        hash_verification_time = time.time()-st
+        print("Hash verification time: ", hash_verification_time)
+        fp = open("server_timelogs.txt", mode='a')
+        print("Hash verification time: ", hash_verification_time, file=fp)
         return str(hash.hexdigest())
     else:
         print(f'Hash not match')
         print(f'Old hash = {old_hash}')
         print(f'New hash = {new_hash}')
-        print("Time taken to verify hash: ", time.time()-st)
+        hash_verification_time = time.time()-st
+        print("Hash verification time: ", hash_verification_time)
+        fp = open("server_timelogs.txt", mode='a')
+        print("Hash verification time: ", hash_verification_time, file=fp)
         return '0'
 
 

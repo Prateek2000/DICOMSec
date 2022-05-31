@@ -65,9 +65,9 @@ def generate_random(VR):  # x is the Value Representation
         start_date = datetime.date(2000, 1, 1)
         random_date = start_date + datetime.timedelta(days=random.randint(1, 9999))
         date = str(random_date).replace("-", "")
-        random_time = datetime.time(
+        random_time = str(datetime.time(
             random.randint(0, 23), random.randint(0, 60), random.randint(0, 60)
-        )
+        ))
         return date + random_time
 
     if VR == "FL":

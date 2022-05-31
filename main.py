@@ -18,12 +18,12 @@ def driver(filename, anonymization, server, port):
     ds = pydicom.dcmread(filename)
     print("Read DICOM file...")
 
-    ###################################################################
-    write_nparr_to_file(ds.pixel_array, 'after_reading.txt')
-    fp1 = open(os.path.join(ds_diff_folder,"initial.txt"), mode="w") #
+    #####################################################################
+    write_nparr_to_file(ds.pixel_array, 'after_reading.txt')            #
+    fp1 = open(os.path.join(ds_diff_folder,"initial.txt"), mode="w")    #
     print(ds, file=fp1)                                                 #
-    fp1.close() 
-    ###################################################################
+    fp1.close()                                                         #        
+    #####################################################################
 
     if anonymization == True:
         ds = anonymise(ds)
