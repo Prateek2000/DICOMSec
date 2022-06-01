@@ -1,7 +1,7 @@
 extraInfo/
 .vscode/
-server/received_files
-server/keys
+server/received_files/*
+server/keys/*
 server/server_timelogs.txt
 client_timelogs.txt
 ds_diffs/*
