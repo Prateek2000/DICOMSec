@@ -81,7 +81,7 @@ if __name__ == "__main__":
     #what all do we want: multiple files, anonymization toggle, server IP address,port
     parser = argparse.ArgumentParser(description='Transfer DICOM files securely')
     
-    parser.add_argument('--anonymize', '-a', 
+    parser.add_argument('--anonymize', '--anonymization', '-a', 
     action='store_true', 
     help='Enable Anonymization')
     

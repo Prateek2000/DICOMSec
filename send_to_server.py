@@ -2,6 +2,7 @@ import requests
 from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.backends.openssl.ec import _EllipticCurvePublicKey
 from base64 import b64encode
+from io import BytesIO
 
 
 def send_dicom_to_server(ciphertext:bytes, tag:bytes, peer_public_key: _EllipticCurvePublicKey, ip: str, port: str):
@@ -9,10 +10,11 @@ def send_dicom_to_server(ciphertext:bytes, tag:bytes, peer_public_key: _Elliptic
         encoding = serialization.Encoding.PEM,
         format = serialization.PublicFormat.SubjectPublicKeyInfo
     )
-    data = {'ciphertext': b64encode(ciphertext).decode('utf-8'),
-            'tag': b64encode(tag).decode('utf-8'),
+    files = {'ciphertext': BytesIO(ciphertext)}
+    data = {'tag': b64encode(tag).decode('utf-8'),
             'peer_public_key_bytes': b64encode(public_key_bytes).decode('utf-8')}
 
     endpoint = 'http://' + ip + ':' + port + '/transfer_dicom'
-    response = requests.get (endpoint, params = data)
+    print("Sending ciphertext over POST request to server")
+    response = requests.post(endpoint, params = data, files=files)
     return response
