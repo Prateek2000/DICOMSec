@@ -58,7 +58,7 @@ def encrypt_dicom(dataset: pydicom.FileDataset, old_values: dict, ip: str, port:
 def get_server_public_key(ip: str, port: str):
     endpoint = 'http://' + ip + ':' + port + '/generate_keys'
     print("Sending get request to: ", endpoint)
-    response = requests.get(endpoint)
+    response = requests.post(endpoint)
     server_public_key = serialization.load_pem_public_key(
         bytes(response.json()['public_key'], encoding='utf-8')
     )
