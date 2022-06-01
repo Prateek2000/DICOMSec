@@ -14,7 +14,7 @@ from write_np_to_file import write_nparr_to_file
 def driver(filename, anonymization, server, port, sha2, timing):
     print(f'server={server}, port={port}')
     # st = time.time()
-    ds_diff_folder = os.path.join("D:\\","VIT","Sem8","Capstone","DICOMSec","ds_diffs")
+    ds_diff_folder = os.path.join(os.getcwd(), 'ds_diffs')
     ds = pydicom.dcmread(filename)
     print("Read DICOM file...")
 

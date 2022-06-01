@@ -84,6 +84,8 @@ def generate_or_load_key():
 @app.route('/transfer_dicom',  methods=['GET'])
 def receive_dicom_image():
     print("=======Received dataset=========")
+    x = len(request.args.get('ciphertext'))
+    print(f'length of ciphertext = {x}')
     ciphertext = b64decode(bytes(request.args.get('ciphertext'), encoding='utf-8'))
     tag = b64decode(bytes(request.args.get('tag'), encoding='utf-8'))
     peer_public_key_bytes = b64decode(bytes(request.args.get('peer_public_key_bytes'), encoding='utf-8'))
@@ -106,7 +108,7 @@ def receive_dicom_image():
 
 
     #####################################################################################
-    ds_diff_folder = os.path.join("D:\\","VIT","Sem8","Capstone","DICOMSec","ds_diffs") #
+    ds_diff_folder = os.path.join(os.getcwd(), 'ds_diffs') #
     fp = open(os.path.join(ds_diff_folder,"received.txt"), mode="w")                    #
     print(dataset, file=fp)
     write_nparr_to_file(dataset.pixel_array, 'after_receiving.txt')                                                              #

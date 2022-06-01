@@ -42,7 +42,7 @@ def verify_hash(dataset: pydicom.FileDataset, old_values: dict) -> str:
     
 
     #####################################################################################
-    ds_diff_folder = os.path.join("D:\\","VIT","Sem8","Capstone","DICOMSec","ds_diffs") #
+    ds_diff_folder = os.path.join(os.getcwd(), 'ds_diffs') #
     fp = open(os.path.join(ds_diff_folder,"restored.txt"), mode="w")                    #
     print(dataset, file=fp)                                                             #
     write_nparr_to_file(dataset.pixel_array, 'after_restoring.txt')                     #                                        #

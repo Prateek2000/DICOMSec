@@ -4,6 +4,7 @@ import pickle
 import io
 import sys
 import time
+import os
 
 
 def hash_dicom(dataset: pydicom.FileDataset, sha2: bool) -> bytes:
@@ -42,4 +43,4 @@ def hash_dicom(dataset: pydicom.FileDataset, sha2: bool) -> bytes:
     return hash.digest()
 
 if __name__ == '__main__':
-    hash = hash_dicom(pydicom.dcmread('D:\VIT\Sem8\Capstone\DICOMSec\sample.dcm'))
+    hash = hash_dicom(pydicom.dcmread(os.path.join(os.getcwd(), 'sample.dcm')))
