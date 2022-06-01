@@ -18,7 +18,7 @@ from write_np_to_file import write_nparr_to_file
 
 app = Flask(__name__)
 
-@app.route('/generate_keys', methods=['GET', 'POST'])
+@app.route('/generate_keys')
 def generate_or_load_key():
     st = time.time()
     global server_private_key 
@@ -81,7 +81,7 @@ def generate_or_load_key():
         }
 
 
-@app.route('/transfer_dicom',  methods=['GET', 'POST'])
+@app.route('/transfer_dicom',  methods=['GET'])
 def receive_dicom_image():
     print("=======Received dataset=========")
     ciphertext = b64decode(bytes(request.args.get('ciphertext'), encoding='utf-8'))
