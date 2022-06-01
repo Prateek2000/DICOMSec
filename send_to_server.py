@@ -14,6 +14,5 @@ def send_dicom_to_server(ciphertext:bytes, tag:bytes, peer_public_key: _Elliptic
             'peer_public_key_bytes': b64encode(public_key_bytes).decode('utf-8')}
 
     endpoint = 'http://' + ip + ':' + port + '/transfer_dicom'
-    print("Sending get request to: ", endpoint)
     response = requests.get (endpoint, params = data)
     return response
