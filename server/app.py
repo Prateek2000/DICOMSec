@@ -108,7 +108,7 @@ def receive_dicom_image():
 
 
     #####################################################################################
-    ds_diff_folder = os.path.join(os.getcwd(), 'ds_diffs') #
+    ds_diff_folder = os.path.join(Path(os.getcwd()).parent, 'ds_diffs')      #
     fp = open(os.path.join(ds_diff_folder,"received.txt"), mode="w")                    #
     print(dataset, file=fp)
     write_nparr_to_file(dataset.pixel_array, 'after_receiving.txt')                                                              #

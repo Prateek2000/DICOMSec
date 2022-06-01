@@ -5,6 +5,7 @@ import sys
 import io
 import os
 import time
+from pathlib import Path
 
 from write_np_to_file import write_nparr_to_file
 from config import hash_family
@@ -42,7 +43,7 @@ def verify_hash(dataset: pydicom.FileDataset, old_values: dict) -> str:
     
 
     #####################################################################################
-    ds_diff_folder = os.path.join(os.getcwd(), 'ds_diffs') #
+    ds_diff_folder = os.path.join(Path(os.getcwd()).parent, 'ds_diffs') #
     fp = open(os.path.join(ds_diff_folder,"restored.txt"), mode="w")                    #
     print(dataset, file=fp)                                                             #
     write_nparr_to_file(dataset.pixel_array, 'after_restoring.txt')                     #                                        #
